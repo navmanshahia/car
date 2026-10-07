@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - npm install
+    - npm run build
+    - /bin/mkdir -p "$HOME/public_html/car"
+    - /bin/rm -rf "$HOME/public_html/car/assets"
+    - /bin/cp -R dist/. "$HOME/public_html/car/"
+    - /bin/cp public/.htaccess "$HOME/public_html/car/.htaccess"
