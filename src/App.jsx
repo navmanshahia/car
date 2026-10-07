@@ -74,5 +74,5 @@ function ConfiguratorSite() {
 }
 
 export default function App() {
-  return window.location.pathname.startsWith('/admin') ? <AdminPage /> : <ConfiguratorSite />
+  const path = window.location.pathname.replace(/\\/+$/, '')\n  return (path === '/admin' || path === '/car/admin') ? <AdminPage /> : <ConfiguratorSite />
 }
