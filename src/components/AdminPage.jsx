@@ -11,7 +11,7 @@ export default function AdminPage() {
     setStatus('loading')
     setError('')
     try {
-      const res = await fetch('/api/quotes', { headers: { 'x-admin-key': adminKey } })
+      const res = await fetch('/car/api/quotes.php', { headers: { 'x-admin-key': adminKey } })
       if (!res.ok) throw new Error('Invalid admin key or server unavailable.')
       const data = await res.json()
       setQuotes(data)
@@ -34,7 +34,7 @@ export default function AdminPage() {
   }
 
   async function updateStatus(id, nextStatus) {
-    const res = await fetch(`/api/quotes/${id}`, {
+    const res = await fetch(`/car/api/quotes.php?id=${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
       body: JSON.stringify({ status: nextStatus })
@@ -45,7 +45,7 @@ export default function AdminPage() {
   if (status === 'locked') {
     return <main className="admin-shell admin-login">
       <div className="admin-login-card">
-        <a href="/" className="brand"><strong>SABLE</strong><span>/ COMMISSION DESK</span></a>
+        <a href="/car/" className="brand"><strong>SABLE</strong><span>/ COMMISSION DESK</span></a>
         <div className="modal-kicker">Protected access</div>
         <h1>Commission<br/><em>inbox.</em></h1>
         <form onSubmit={login}>
@@ -59,7 +59,7 @@ export default function AdminPage() {
 
   return <main className="admin-shell">
     <header className="admin-topbar">
-      <a href="/" className="brand"><strong>SABLE</strong><span>/ COMMISSION DESK</span></a>
+      <a href="/car/" className="brand"><strong>SABLE</strong><span>/ COMMISSION DESK</span></a>
       <div className="admin-actions"><span>{quotes.length} commissions</span><button onClick={() => loadQuotes()}>Refresh</button><button onClick={() => { sessionStorage.removeItem('sable-admin-key'); location.reload() }}>Lock</button></div>
     </header>
     <section className="admin-intro">
