@@ -10,7 +10,7 @@ export default function QuoteModal({ open, onClose, config, price }) {
     e.preventDefault()
     setStatus('sending')
     try {
-      const response = await fetch('/api/quotes', {
+      const response = await fetch('/car/api/quotes.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
