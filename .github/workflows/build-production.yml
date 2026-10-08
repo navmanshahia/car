@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -30,6 +32,7 @@ jobs:
         run: |
           cp public/.htaccess dist/.htaccess
           touch dist/.nojekyll
+          rm -rf /tmp/car-dist
           mkdir -p /tmp/car-dist
           cp -R dist/. /tmp/car-dist/
 
@@ -37,9 +40,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan production-build
+          git fetch origin production
+          git checkout -B production origin/production
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -R /tmp/car-dist/. .
           git add -A
+          if git diff --cached --quiet; then
+            echo "No production changes."
+            exit 0
+          fi
           git commit -m "Build production site from $GITHUB_SHA"
-          git push --force origin HEAD:production
+          git push origin production
