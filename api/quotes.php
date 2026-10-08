@@ -5,8 +5,13 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
 
-const DATA_FILE = __DIR__ . '/data/quotes.json';
-const LOCAL_CONFIG = __DIR__ . '/config.local.php';
+$sableHome = dirname(__DIR__, 3) . '/.sable-car';
+define('DATA_FILE', $sableHome . '/quotes.json');
+define('LOCAL_CONFIG', $sableHome . '/config.php');
+
+if (!is_dir($sableHome)) {
+    @mkdir($sableHome, 0700, true);
+}
 
 if (file_exists(LOCAL_CONFIG)) {
     require LOCAL_CONFIG;
