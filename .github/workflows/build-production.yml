@@ -1,0 +1,45 @@
+name: Build production branch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Vite app
+        run: npm run build
+
+      - name: Prepare deploy folder
+        run: |
+          cp public/.htaccess dist/.htaccess
+          touch dist/.nojekyll
+          mkdir -p /tmp/car-dist
+          cp -R dist/. /tmp/car-dist/
+
+      - name: Publish production branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan production-build
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -R /tmp/car-dist/. .
+          git add -A
+          git commit -m "Build production site from $GITHUB_SHA"
+          git push --force origin HEAD:production
